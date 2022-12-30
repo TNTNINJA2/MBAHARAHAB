@@ -117,7 +117,7 @@ public class PlayerScript : MonoBehaviour
             {
                 currentlyHeldBox = null;
             }
-            //currentlyHeldBox.transform.position = new Vector3(transform.position.x, transform.position.y + 2, 0);
+            currentlyHeldBox.transform.position = new Vector3(transform.position.x, transform.position.y + 2, 0);
         }
     }
 
