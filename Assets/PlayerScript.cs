@@ -27,6 +27,8 @@ public class PlayerScript : MonoBehaviour
     private float movementAcceleration;
     [SerializeField]
     private float jumpVelocity;
+    [SerializeField]
+    private float boxHoldDistance;
 
     private GameObject currentlyHeldBox = null;
 
@@ -70,11 +72,11 @@ public class PlayerScript : MonoBehaviour
             rigidBody.velocity = new Vector2(Mathf.Clamp(rigidBody.velocity.x + movementControls.ReadValue<float>() * movementAcceleration * Time.deltaTime,
                 -maxMoveSpeed, maxMoveSpeed), rigidBody.velocity.y);
         }
-        if (movementControls.ReadValue<float>() >= 0)
+        if (movementControls.ReadValue<float>() > 0)
         {
             transform.rotation = Quaternion.Euler(0, 0, 0);
         }
-        else
+        else if (movementControls.ReadValue<float>() < 0)
         {
             transform.rotation = Quaternion.Euler(0, 180, 0);
 
@@ -96,7 +98,7 @@ public class PlayerScript : MonoBehaviour
         if (currentlyHeldBox == null)
         {
             //if player just began pressing shift and there is a box in the range, make it the currently held box
-            if (boxInteractControls.ReadValue<float>() == 1)
+            if (boxInteractControls.ReadValue<float>() == 1 && boxInteractControls.WasPressedThisFrame())
             {
                 Debug.Log("trying to find a box to pickup");
                 GameObject[] boxes = GameObject.FindGameObjectsWithTag("Box");
@@ -113,11 +115,13 @@ public class PlayerScript : MonoBehaviour
             }
         } else
         {
-            if (boxInteractControls.ReadValue<float>() == 1)
+            currentlyHeldBox.transform.position = new Vector3(transform.position.x, transform.position.y + boxHoldDistance, 0);
+            currentlyHeldBox.transform.rotation = Quaternion.Euler(0, 0, Time.time * 180);
+            if (boxInteractControls.ReadValue<float>() == 1 && boxInteractControls.WasPressedThisFrame())
             {
                 currentlyHeldBox = null;
+               
             }
-            currentlyHeldBox.transform.position = new Vector3(transform.position.x, transform.position.y + 2, 0);
         }
     }
 
